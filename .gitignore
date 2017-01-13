@@ -1,0 +1,10 @@
+bin
+lib
+__history
+__recovery
+Win32
+*.dcu
+*.local
+*.identcache
+*.res
+*.stat

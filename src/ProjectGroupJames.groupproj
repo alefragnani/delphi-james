@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{2B13E08F-BB2B-47A7-BDF6-A9D735A4A07E}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="VisualJames.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="james.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="VisualJames">
+        <MSBuild Projects="VisualJames.dproj"/>
+    </Target>
+    <Target Name="VisualJames:Clean">
+        <MSBuild Projects="VisualJames.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VisualJames:Make">
+        <MSBuild Projects="VisualJames.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="james">
+        <MSBuild Projects="james.dproj"/>
+    </Target>
+    <Target Name="james:Clean">
+        <MSBuild Projects="james.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="james:Make">
+        <MSBuild Projects="james.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="VisualJames;james"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="VisualJames:Clean;james:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="VisualJames:Make;james:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
