@@ -98,7 +98,17 @@ The project is in _early development_ and there is still more stuff to be added.
 * Support **64bits** settings when available
 * Support other Delphi versions
 * Support other relevant Delphi settings
-* Support Relative Path
+* ~~Support Relative Path~~-
+
+## Changelog
+
+### Version 0.2.0
+
+* **New**: Support Relative Path
+
+### Version 0.1.0
+
+* Initial release
 
 ## License
 

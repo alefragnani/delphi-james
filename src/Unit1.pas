@@ -57,6 +57,9 @@ end;
 
 procedure TForm1.btLoadFromFileClick(Sender: TObject);
 begin
+  SynEdit1.Lines.Clear;
+  SynEdit1.Lines.LoadFromFile(IncludeTrailingPathDelimiter(
+    ExtractFilePath(Application.ExeName)) + '.james');
   // clear
   lbKnownPackages.Items.Clear;
   lbLibraryPath.Items.Clear;

@@ -3,12 +3,15 @@ unit DelphiSettings;
 interface
 
 uses
-  System.Classes,  VCL.Dialogs,
+  System.Classes,
   System.Generics.Defaults,
   System.Generics.Collections,
   System.Win.Registry,
   System.SysUtils,
   DelphiVersionInfo;
+
+const
+  TAG_BASE_FOLDER = '#(JAMESBASEFOLDER)';
 
 type
   EDelphiVersionNotSupported = class(Exception);
@@ -17,6 +20,7 @@ type
   private
     FSupportedVersions: TList<TDelphiVersionInfo>;
     FCurrentVersion: TDelphiVersionInfo;
+    FBaseFolder: string;
 
     FRegistry: System.Win.Registry.TRegistry;
     FKnownPackages: System.Generics.Collections.TList<string>;
@@ -24,8 +28,10 @@ type
     FEnvironmentVariables: System.Generics.Collections.TList<string>;
 
     procedure InitSupportedVersions;
-    function DoubleBackslash(const path: string): string; inline;
-    function RemoveDoubleQuotes(const path: string): string; inline;
+    function DoubleBackslash(const path: string): string;
+    function RemoveDoubleQuotes(const path: string): string;
+    function ReplaceBaseFolderByTag(const path: string): string;
+    function ReplaceBaseFolderByRealValue(const path: string): string;
 
     function GetInstalledVersions: TArray<string>;
     function GetKnownPackages: TArray<string>;
@@ -50,6 +56,7 @@ type
     procedure LoadDelphiSettingsFromJSON(const filename: string);
     procedure SaveDelphiSettingsToJSON(const filename: string);
 
+    property BaseFolder: string read FBaseFolder write FBaseFolder;
     property Version: string read GetVersion write SetVersion;
     property InstalledVersions: TArray<string> read GetInstalledVersions;
 
@@ -340,7 +347,7 @@ end;
 procedure TDelphiSettings.SaveEnvironmentVariables;
 var
   sb: TStringBuilder;
-  key, path: string;
+  path: string;
 begin
   if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyEnvironmentVariables, False) then
     exit;
@@ -382,24 +389,35 @@ begin
     o := TJSONObject.ParseJSONValue(TEncoding.ASCII.GetBytes(sl.Text),0) as TJSONObject;
     try
       Version := o.GetValue('version').Value ;
+      BaseFolder := ExtractFileDir(filename);
 
       a := TJSONArray(o.Get('known_packages').JsonValue);
       for idx := 0 to a.Count - 1 do
-        FKnownPackages.Add(RemoveDoubleQuotes(a.Items[idx].ToString));
+        FKnownPackages.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
 
       a := TJSONArray(o.Get('library_path').JsonValue);
       for idx := 0 to a.Count - 1 do
-        FLibraryPath.Add(RemoveDoubleQuotes(a.Items[idx].ToString));
+        FLibraryPath.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
 
       a := TJSONArray(o.Get('environment_variables').JsonValue);
       for idx := 0 to a.Count - 1 do
-        FEnvironmentVariables.Add(RemoveDoubleQuotes(a.Items[idx].ToString));
+        FEnvironmentVariables.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
     finally
       o.Free;
     end;
   finally
     sl.free;
   end;
+end;
+
+function TDelphisettings.ReplaceBaseFolderByTag(const path: string): string;
+begin
+  result := StringReplace(path, BaseFolder, TAG_BASE_FOLDER, [rfIgnoreCase]);
+end;
+
+function TDelphisettings.ReplaceBaseFolderByRealValue(const path: string): string;
+begin
+  result := StringReplace(path, TAG_BASE_FOLDER, BaseFolder, [rfIgnoreCase]);
 end;
 
 function TDelphiSettings.DoubleBackslash(const path: string): string;
@@ -427,22 +445,23 @@ begin
   try
     // add the array to the object.
     o.AddPair('version', FCurrentVersion.Description);
+    BaseFolder := DoubleBackslash(ExtractFileDir(filename));
 
     //
     a := TJSONArray.Create();
     o.AddPair('known_packages', a);
     for item in FKnownPackages do
-      a.Add(DoubleBackslash(item));
+      a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
 
     a := TJSONArray.Create();
     o.AddPair('library_path', a);
     for item in FLibraryPath do
-      a.Add(DoubleBackslash(item));
+      a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
 
     a := TJSONArray.Create();
     o.AddPair('environment_variables', a);
     for item in FEnvironmentVariables do
-      a.Add(DoubleBackslash(item));
+      a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
 
   finally
     sl := TStringList.Create;

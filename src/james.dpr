@@ -5,12 +5,18 @@ program james;
 {$R *.res}
 
 /// Supported Parameters
-///  -l = Load Delphi Settings
-///  -a = Apply Delphi Settings
+///
+///   Loading Settings
+///     -l = Load Delphi Settings (which Delphi version)
+///
+///   Applying Settings
+///     -a = Apply Delphi Settings (.james file path)
 
 uses
   System.SysUtils,
-  DelphiSettings;
+  Vcl.Forms,
+  DelphiSettings in 'DelphiSettings.pas',
+  DelphiVersionInfo in 'DelphiVersionInfo.pas';
 
 var
   FDelphiSettings: TDelphiSettings;
@@ -23,7 +29,7 @@ begin
       WriteLn('Error: No version defined. Use -l:VERSION');
       exit;
     end;
-    jamesFile := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + '.james';
+    jamesFile := IncludeTrailingPathDelimiter(GetCurrentDir) + '.james';
     FDelphiSettings := TDelphiSettings.Create;
     try
       try
@@ -44,7 +50,7 @@ begin
     // no params, look for '.james' file to 'apply'
     if ParamCount = 0 then
     begin
-      param1 := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + '.james';
+      param1 := IncludeTrailingPathDelimiter(GetCurrentDir) + '.james';
       if not FileExists(param1) then
       begin
         WriteLn('Error: File ".james" does not exists.');
@@ -63,6 +69,7 @@ begin
         Exit;
       end;
 
+      param1 := ExpandFileName(param1);
       if not FileExists(param1) then
       begin
         WriteLn('Error: File "' + param1 + '" does not exists.');
