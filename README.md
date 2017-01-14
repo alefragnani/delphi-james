@@ -98,6 +98,7 @@ The project is in _early development_ and there is still more stuff to be added.
 * Support **64bits** settings when available
 * Support other Delphi versions
 * Support other relevant Delphi settings
+* Support Relative Path
 
 ## License
 
