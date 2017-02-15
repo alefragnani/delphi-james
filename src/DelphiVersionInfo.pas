@@ -25,11 +25,25 @@ type
     constructor Create; virtual; abstract;
 
     class function PlatformStr(eplatform: TDelphiPlatform): string;
-    function GetLibraryPathForPlatform(eplatform: TDelphiPlatform): string;
+    function GetLibraryPathForPlatform(eplatform: TDelphiPlatform): string; virtual;
+    function SupportsVariousPlatforms: boolean;
     property SupportedPlatforms: TDelphiPlatforms read GetSupportedPlatforms;
   end;
 
+  TDelphi5 = class(TDelphiVersion)
+  public
+    constructor Create; override;
+    function GetLibraryPathForPlatform(eplatform: TDelphiPlatform): string; override;
+  end;
+
   TDelphi2006 = class(TDelphiVersion)
+  public
+    constructor Create; override;
+  end;
+
+  TDelphiSeattle = class(TDelphiVersion)
+  protected
+    function GetSupportedPlatforms: TDelphiPlatforms; override;
   public
     constructor Create; override;
   end;
@@ -66,6 +80,38 @@ begin
   result := StringReplace(Self.RegistryKeyLibraryPath, TAG_PLATFORM, PlatformStr(eplatform), [rfIgnoreCase]);
 end;
 
+function TDelphiVersion.SupportsVariousPlatforms: boolean;
+var
+  supported: TDelphiPlatforms;
+  count, i: byte;
+begin
+  supported := Self.GetSupportedPlatforms;
+  count := 0;
+  for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+  begin
+    if TDelphiPlatform(i) in Self.SupportedPlatforms then
+      inc(count);
+  end;
+  result := count > 1;
+end;
+
+constructor TDelphi5.Create;
+begin
+  Self.Description := 'Delphi 5';
+  Self.RegistryKey := 'Software\Borland\Delphi\5.0';
+  Self.RegistryKeyKnownPackages := 'Software\Borland\Delphi\5.0\Known Packages';
+  Self.RegistryKeyLibraryPath := 'Software\Borland\Delphi\5.0\Library';
+  Self.RegistryKeyEnvironmentVariables := '';
+end;
+
+function TDelphi5.GetLibraryPathForPlatform(eplatform: TDelphiPlatform): string;
+begin
+  if eplatform = dpWin32 then
+    result := Self.RegistryKeyLibraryPath
+  else
+    result := '';
+end;
+
 constructor TDelphi2006.Create;
 begin
   Self.Description := 'Delphi 2006';
@@ -75,6 +121,20 @@ begin
   Self.RegistryKeyEnvironmentVariables := '';
 end;
 
+
+constructor TDelphiSeattle.Create;
+begin
+  Self.Description := 'Delphi Seattle';
+  Self.RegistryKey := 'Software\Embarcadero\BDS\17.0';
+  Self.RegistryKeyKnownPackages := 'Software\Embarcadero\BDS\17.0\Known Packages';
+  Self.RegistryKeyLibraryPath := 'Software\Embarcadero\BDS\17.0\Library\' + TAG_PLATFORM;
+  Self.RegistryKeyEnvironmentVariables := 'Software\Embarcadero\BDS\17.0\Environment Variables';
+end;
+
+function TDelphiSeattle.GetSupportedPlatforms: TDelphiPlatforms;
+begin
+  result := [dpWin32, dpWin64, dpiOSDevice32, dpiOSDevice64, dpiOSSimulator,  dpOSX32, dpAndroid32];
+end;
 
 constructor TDelphiBerlin.Create;
 begin

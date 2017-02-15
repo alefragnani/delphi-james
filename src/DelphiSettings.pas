@@ -106,7 +106,9 @@ end;
 
 procedure TDelphiSettings.InitSupportedVersions;
 begin
+  FSupportedVersions.Add(TDelphi5.Create);
   FSupportedVersions.Add(TDelphi2006.Create);
+  FSupportedVersions.Add(TDelphiSeattle.Create);
   FSupportedVersions.Add(TDelphiBerlin.Create);
 end;
 
@@ -291,7 +293,6 @@ end;
 procedure TDelphiSettings.LoadDelphiSettings;
 var
   i: byte;
-  pp: TDelphiPlatforms;
 begin
   if not Assigned(FCurrentVersion) then
     exit;
@@ -354,9 +355,9 @@ begin
     if not FRegistry.OpenKey(FCurrentVersion.GetLibraryPathForPlatform(TDelphiPlatform(i)), False) then
       Continue;
 
-    if FLibraryPath[TDelphiPlatform(i)].Count = 0 then
-      FRegistry.WriteString('Search Path', '')
-    else
+    if FLibraryPath[TDelphiPlatform(i)].Count > 0 then
+//      FRegistry.WriteString('Search Path', '')
+//    else
     begin
       sb := TStringBuilder.Create;
       for path in FLibraryPath[TDelphiPlatform(i)] do
@@ -433,11 +434,20 @@ begin
       for idx := 0 to a.Count - 1 do
         FKnownPackages.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
 
-      for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+      if not FCurrentVersion.SupportsVariousPlatforms then
       begin
-        a := TJSONArray(o.Get('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i)))).JsonValue);
-        for idx := 0 to a.Count - 1 do
-          FLibraryPath[TDelphiPlatform(i)].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+          a := TJSONArray(o.Get('library_path').JsonValue);
+          for idx := 0 to a.Count - 1 do
+            FLibraryPath[dpWin32].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+      end
+      else
+      begin
+        for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+        begin
+          a := TJSONArray(o.Get('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i)))).JsonValue);
+          for idx := 0 to a.Count - 1 do
+            FLibraryPath[TDelphiPlatform(i)].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+        end;
       end;
 
       a := TJSONArray(o.Get('environment_variables').JsonValue);
@@ -495,14 +505,24 @@ begin
     for item in FKnownPackages do
       a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
 
-    for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+    if not FCurrentVersion.SupportsVariousPlatforms then
     begin
-      if FLibraryPath[TDelphiPlatform(i)].Count > 0 then
+      a := TJSONArray.Create();
+      o.AddPair('library_path', a);
+      for item in FLibraryPath[dpWin32] do
+        a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+    end
+    else
+    begin
+      for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
       begin
-        a := TJSONArray.Create();
-        o.AddPair('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i))), a);
-        for item in FLibraryPath[TDelphiPlatform(i)] do
-          a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+        if FLibraryPath[TDelphiPlatform(i)].Count > 0 then
+        begin
+          a := TJSONArray.Create();
+          o.AddPair('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i))), a);
+          for item in FLibraryPath[TDelphiPlatform(i)] do
+            a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+        end;
       end;
     end;
 

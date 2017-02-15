@@ -16,7 +16,9 @@ uses
   System.SysUtils,
   Vcl.Forms,
   DelphiSettings in 'DelphiSettings.pas',
-  DelphiVersionInfo in 'DelphiVersionInfo.pas';
+  DelphiVersionInfo in 'DelphiVersionInfo.pas',
+  Converters in '..\utils\Converters.pas',
+  Writers in '..\utils\Writers.pas';
 
 var
   FDelphiSettings: TDelphiSettings;
