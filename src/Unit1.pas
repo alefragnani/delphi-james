@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, SynEditHighlighter,
-  SynHighlighterJSON, SynEdit, DelphiSettings, Vcl.ExtCtrls;
+  SynHighlighterJSON, SynEdit, DelphiSettings, DelphiVersionInfo, Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -68,7 +68,7 @@ begin
   FDelphiSettings.LoadDelphiSettingsFromJSON(IncludeTrailingPathDelimiter(
     ExtractFilePath(Application.ExeName)) + '.james');
   lbKnownPackages.Items.AddStrings(FDelphiSettings.KnownPackages);
-  lbLibraryPath.Items.AddStrings(FDelphiSettings.LibraryPath);
+  lbLibraryPath.Items.AddStrings(FDelphiSettings.LibraryPath[dpWin32]);
   lbEnvironmentVariables.Items.AddStrings(FDelphiSettings.EnvironmentVariables);
 end;
 
@@ -82,7 +82,7 @@ begin
   // load
   FDelphiSettings.LoadDelphiSettings;
   lbKnownPackages.Items.AddStrings(FDelphiSettings.KnownPackages);
-  lbLibraryPath.Items.AddStrings(FDelphiSettings.LibraryPath);
+  lbLibraryPath.Items.AddStrings(FDelphiSettings.LibraryPath[dpWin32]);
   lbEnvironmentVariables.Items.AddStrings(FDelphiSettings.EnvironmentVariables);
 end;
 

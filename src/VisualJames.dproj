@@ -121,6 +121,9 @@
                 <Source>
                     <Source Name="MainSource">VisualJames.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclMetropolisUILiveTile240.bpl">File c:\program files\embarcadero\studio\18.0\bin\dclMetropolisUILiveTile240.bpl not found</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>

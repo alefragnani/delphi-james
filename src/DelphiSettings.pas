@@ -18,13 +18,13 @@ type
 
   TDelphiSettings = class
   private
-    FSupportedVersions: TList<TDelphiVersionInfo>;
-    FCurrentVersion: TDelphiVersionInfo;
+    FSupportedVersions: TList<TDelphiVersion>;
+    FCurrentVersion: TDelphiVersion;
     FBaseFolder: string;
 
     FRegistry: System.Win.Registry.TRegistry;
     FKnownPackages: System.Generics.Collections.TList<string>;
-    FLibraryPath: System.Generics.Collections.TList<string>;
+    FLibraryPath: array[dpWin32..dpAndroid32] of System.Generics.Collections.TList<string>;
     FEnvironmentVariables: System.Generics.Collections.TList<string>;
 
     procedure InitSupportedVersions;
@@ -37,7 +37,7 @@ type
     function GetKnownPackages: TArray<string>;
     function GetVersion: string;
     procedure SetVersion(value: string);
-    function GetLibraryPath: TArray<string>;
+    function GetLibraryPath(index: TDelphiPlatform): TArray<string>;
     function GetEnvironmentVariables: TArray<string>;
 
     procedure ResetSettings;
@@ -61,7 +61,7 @@ type
     property InstalledVersions: TArray<string> read GetInstalledVersions;
 
     property KnownPackages: TArray<string> read GetKnownPackages;
-    property LibraryPath: TArray<string> read GetLibraryPath;
+    property LibraryPath[index: TDelphiPlatform]: TArray<string> read GetLibraryPath;
     property EnvironmentVariables: TArray<string> read GetEnvironmentVariables;
   end;
 
@@ -71,6 +71,7 @@ uses
   System.JSON,
   System.JSON.Builders,
   System.JSON.Writers,
+  System.Variants,
   Converters;
 
 
@@ -78,42 +79,41 @@ uses
 constructor TDelphiSettings.Create;
 begin
   FCurrentVersion := nil;
-  FKnownPackages := TList<string>.Create;
-  FLibraryPath := TList<string>.Create;
-  FEnvironmentVariables := TList<string>.Create;
   FRegistry := TRegistry.Create;
 
-  FSupportedVersions := TList<TDelphiVersionInfo>.Create;
-
+  FSupportedVersions := TList<TDelphiVersion>.Create;
   InitSupportedVersions;
 end;
 
 destructor TDelphiSettings.Destroy;
+var
+  i: byte;
 begin
-  FKnownPackages.Clear;
-  FKnownPackages.Free;
-  FLibraryPath.Clear;
-  FLibraryPath.Free;
-  FEnvironmentVariables.Clear;
-  FEnvironmentVariables.Free;
+  if Assigned(FKnownPackages) then
+  begin
+    FKnownPackages.Clear;
+    FKnownPackages.Free;
+
+    for i := Ord(Low(FLibraryPath)) to Ord(High(FLibraryPath)) do
+    begin
+      FLibraryPath[TDelphiPlatform(i)].Clear;
+      FLibraryPath[TDelphiPlatform(i)].Free;
+    end;
+    FEnvironmentVariables.Clear;
+    FEnvironmentVariables.Free;
+  end;
 end;
 
 procedure TDelphiSettings.InitSupportedVersions;
 begin
-  FSupportedVersions.Add(TDelphiVersionInfo.Create('Delphi 2006',
-    'Software\Borland\BDS\4.0',
-    'Software\Borland\BDS\4.0\Library',
-    ''));
-  FSupportedVersions.Add(TDelphiVersionInfo.Create('Delphi Berlin',
-    'Software\Embarcadero\BDS\18.0',
-    'Software\Embarcadero\BDS\18.0\Library\Win32',
-    'Software\Embarcadero\BDS\18.0\Environment Variables'));
+  FSupportedVersions.Add(TDelphi2006.Create);
+  FSupportedVersions.Add(TDelphiBerlin.Create);
 end;
 
 function TDelphiSettings.GetInstalledVersions: TArray<string>;
 var
   supported: TList<string>;
-  version: TDelphiVersionInfo;
+  version: TDelphiVersion;
 begin
   supported := TList<string>.Create;
   try
@@ -133,9 +133,9 @@ begin
   result := FKnownPackages.ToArray;
 end;
 
-function TDelphiSettings.GetLibraryPath: TArray<string>;
+function TDelphiSettings.GetLibraryPath(index: TDelphiPlatform): TArray<string>;
 begin
-  result := FLibraryPath.ToArray;
+  result := FLibraryPath[index].ToArray;
 end;
 
 function TDelphiSettings.GetEnvironmentVariables: TArray<string>;
@@ -154,7 +154,7 @@ end;
 
 procedure TDelphiSettings.SetVersion(value: string);
 var
-  version: TDelphiVersionInfo;
+  version: TDelphiVersion;
   installed: boolean;
   iv: string;
 begin
@@ -197,7 +197,7 @@ var
   oKeys: TStringList;
   key: string;
 begin
-  if not FRegistry.OpenKey(FCurrentVersion.RegistryKey + '\Known Packages', False) then
+  if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyKnownPackages, False) then
     exit;
 
   oKeys := TStringList.Create;
@@ -217,29 +217,33 @@ procedure TDelphiSettings.LoadLibraryPath;
 var
   oKeys: TStringList;
   key, searchPath: string;
+  i: byte;
 begin
-  if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyLibraryPath, False) then
-    exit;
+  for i := Ord(Low(FLibraryPath)) to Ord(High(FLibraryPath)) do
+  begin
+    if not FRegistry.OpenKey(FCurrentVersion.GetLibraryPathForPlatform(TDelphiPlatform(i)), False) then
+      Continue;
 
-  oKeys := TStringList.Create;
-  try
-    searchPath := FRegistry.ReadString('Search Path');
-    if searchPath <> '' then
-    begin
-      oKeys := TStringList.Create;
-      oKeys.Delimiter := ';';
-      oKeys.StrictDelimiter := true;
-      oKeys.DelimitedText := searchPath;
-
-      for key in oKeys do
+    oKeys := TStringList.Create;
+    try
+      searchPath := FRegistry.ReadString('Search Path');
+      if searchPath <> '' then
       begin
-        FLibraryPath.Add(key);
+        oKeys := TStringList.Create;
+        oKeys.Delimiter := ';';
+        oKeys.StrictDelimiter := true;
+        oKeys.DelimitedText := searchPath;
+
+        for key in oKeys do
+        begin
+          FLibraryPath[TDelphiPlatform(i)].Add(key);
+        end;
       end;
+    finally
+      oKeys.Free;
     end;
-  finally
-    oKeys.Free;
+    FRegistry.CloseKey;
   end;
-  FRegistry.CloseKey;
 end;
 
 procedure TDelphiSettings.LoadEnvironmentVariables;
@@ -272,16 +276,35 @@ begin
 end;
 
 procedure TDelphiSettings.ResetSettings;
+var
+  i: byte;
 begin
+  if not Assigned(FKnownPackages) then
+    Exit;
+
   FKnownPackages.Clear;
-  FLibraryPath.Clear;
+  for i := Ord(Low(FLibraryPath)) to Ord(High(FLibraryPath)) do
+    FLibraryPath[TDelphiPlatform(i)].Clear;
   FEnvironmentVariables.Clear;
 end;
 
 procedure TDelphiSettings.LoadDelphiSettings;
+var
+  i: byte;
+  pp: TDelphiPlatforms;
 begin
   if not Assigned(FCurrentVersion) then
     exit;
+
+  if not Assigned(FKnownPackages) then
+  begin
+    FKnownPackages := TList<string>.Create;
+    for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+    begin
+        FLibraryPath[TDelphiPlatform(i)] := TList<string>.Create;
+    end;
+    FEnvironmentVariables := TList<string>.Create;
+  end;
 
   LoadKnownPackages;
   LoadLibraryPath;
@@ -296,7 +319,7 @@ var
   oKeys: TStringList;
   package: string;
 begin
-  if not FRegistry.OpenKey(FCurrentVersion.RegistryKey + '\Known Packages', False) then
+  if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyKnownPackages, False) then
     exit;
 
   oKeys := TStringList.Create;
@@ -324,22 +347,26 @@ procedure TDelphiSettings.SaveLibraryPath;
 var
   path: string;
   sb: TStringBuilder;
+  i: byte;
 begin
-  if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyLibraryPath, False) then
-    exit;
-
-  if FLibraryPath.Count = 0 then
-    FRegistry.WriteString('Search Path', '')
-  else
+  for i := Ord(Low(FLibraryPath)) to Ord(High(FLibraryPath)) do
   begin
-    sb := TStringBuilder.Create;
-    for path in FLibraryPath do
+    if not FRegistry.OpenKey(FCurrentVersion.GetLibraryPathForPlatform(TDelphiPlatform(i)), False) then
+      Continue;
+
+    if FLibraryPath[TDelphiPlatform(i)].Count = 0 then
+      FRegistry.WriteString('Search Path', '')
+    else
     begin
-      sb.Append(path);
-      sb.Append(';');
+      sb := TStringBuilder.Create;
+      for path in FLibraryPath[TDelphiPlatform(i)] do
+      begin
+        sb.Append(path);
+        sb.Append(';');
+      end;
+      sb.Remove(sb.Length - 1, 1);
+      FRegistry.WriteString('Search Path', sb.ToString());
     end;
-    sb.Remove(sb.Length - 1, 1);
-    FRegistry.WriteString('Search Path', sb.ToString());
   end;
   FRegistry.CloseKey;
 end;
@@ -381,7 +408,18 @@ var
   o: TJSONObject;
   a: TJSONArray;
   idx: integer;
+  i: byte;
 begin
+  if not Assigned(FKnownPackages) then
+  begin
+    FKnownPackages := TList<string>.Create;
+    for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+    begin
+        FLibraryPath[TDelphiPlatform(i)] := TList<string>.Create;
+    end;
+    FEnvironmentVariables := TList<string>.Create;
+  end;
+
   sl := TStringList.Create;
   try
     sl.LoadfromFile(filename);
@@ -395,9 +433,12 @@ begin
       for idx := 0 to a.Count - 1 do
         FKnownPackages.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
 
-      a := TJSONArray(o.Get('library_path').JsonValue);
-      for idx := 0 to a.Count - 1 do
-        FLibraryPath.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+      for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+      begin
+        a := TJSONArray(o.Get('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i)))).JsonValue);
+        for idx := 0 to a.Count - 1 do
+          FLibraryPath[TDelphiPlatform(i)].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+      end;
 
       a := TJSONArray(o.Get('environment_variables').JsonValue);
       for idx := 0 to a.Count - 1 do
@@ -440,6 +481,7 @@ var
   a: TJSONArray;
   item: string;
   sl: TStringList;
+  i: byte;
 begin
   o := TJSONObject.Create;
   try
@@ -453,10 +495,16 @@ begin
     for item in FKnownPackages do
       a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
 
-    a := TJSONArray.Create();
-    o.AddPair('library_path', a);
-    for item in FLibraryPath do
-      a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+    for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
+    begin
+      if FLibraryPath[TDelphiPlatform(i)].Count > 0 then
+      begin
+        a := TJSONArray.Create();
+        o.AddPair('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i))), a);
+        for item in FLibraryPath[TDelphiPlatform(i)] do
+          a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+      end;
+    end;
 
     a := TJSONArray.Create();
     o.AddPair('environment_variables', a);
