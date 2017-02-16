@@ -27,11 +27,16 @@ type
     FLibraryPath: array[dpWin32..dpAndroid32] of System.Generics.Collections.TList<string>;
     FEnvironmentVariables: System.Generics.Collections.TList<string>;
 
+    FLastError: string;
+
     procedure InitSupportedVersions;
     function DoubleBackslash(const path: string): string;
     function RemoveDoubleQuotes(const path: string): string;
     function ReplaceBaseFolderByTag(const path: string): string;
     function ReplaceBaseFolderByRealValue(const path: string): string;
+
+    procedure SetLastError(const operation, message: string);
+    function GetLastError: string;
 
     function GetInstalledVersions: TArray<string>;
     function GetKnownPackages: TArray<string>;
@@ -53,7 +58,7 @@ type
 
     procedure LoadDelphiSettings;
     procedure SaveDelphiSettings;
-    procedure LoadDelphiSettingsFromJSON(const filename: string);
+    function LoadDelphiSettingsFromJSON(const filename: string): boolean;
     procedure SaveDelphiSettingsToJSON(const filename: string);
 
     property BaseFolder: string read FBaseFolder write FBaseFolder;
@@ -63,6 +68,8 @@ type
     property KnownPackages: TArray<string> read GetKnownPackages;
     property LibraryPath[index: TDelphiPlatform]: TArray<string> read GetLibraryPath;
     property EnvironmentVariables: TArray<string> read GetEnvironmentVariables;
+
+    property LastError: string read GetLastError;
   end;
 
 implementation
@@ -78,6 +85,8 @@ uses
 
 constructor TDelphiSettings.Create;
 begin
+  FLastError := '';
+
   FCurrentVersion := nil;
   FRegistry := TRegistry.Create;
 
@@ -403,7 +412,7 @@ begin
   SaveEnvironmentVariables;
 end;
 
-procedure TDelphiSettings.LoadDelphiSettingsFromJSON(const filename: string);
+function TDelphiSettings.LoadDelphiSettingsFromJSON(const filename: string): boolean;
 var
   sl: TStringList;
   o, olp: TJSONObject;
@@ -426,6 +435,13 @@ begin
     sl.LoadfromFile(filename);
 
     o := TJSONObject.ParseJSONValue(TEncoding.ASCII.GetBytes(sl.Text),0) as TJSONObject;
+    if o = nil then
+    begin
+      result := False;
+      SetLastError('Loading Settings from file', 'Invalid JSON file. Pleas check if it is a valid JSON file');
+      Exit;
+    end;
+
     try
       Version := o.GetValue('version').Value ;
       BaseFolder := ExtractFileDir(filename);
@@ -458,6 +474,8 @@ begin
       a := TJSONArray(o.Get('environment_variables').JsonValue);
       for idx := 0 to a.Count - 1 do
         FEnvironmentVariables.Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+
+      result := True;
     finally
       o.Free;
     end;
@@ -488,6 +506,16 @@ begin
     result := Copy(result, 2, MaxInt);
   if result[length(result)] = '"' then
     result := Copy(result, 1, Length(result) - 1);
+end;
+
+procedure TDelphiSettings.SetLastError(const operation, message: string);
+begin
+  FLastError := Format('[%s]: %s', [operation, message]);
+end;
+
+function TDelphiSettings.GetLastError: string;
+begin
+  result := FLastError;
 end;
 
 procedure TDelphiSettings.SaveDelphiSettingsToJSON(const filename: string);

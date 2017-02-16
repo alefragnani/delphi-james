@@ -81,9 +81,13 @@ begin
 
     FDelphiSettings := TDelphiSettings.Create;
     try
-      FDelphiSettings.LoadDelphiSettingsFromJSON(param1);
-      FDelphiSettings.SaveDelphiSettings;
-      WriteLn('Success: Settings applied to ' + FDelphiSettings.Version);
+      if FDelphiSettings.LoadDelphiSettingsFromJSON(param1) then
+      begin
+        FDelphiSettings.SaveDelphiSettings;
+        WriteLn('Success: Settings applied to ' + FDelphiSettings.Version);
+      end
+      else
+        WriteLn('Error: ' + FDelphiSettings.LastError);
     finally
       FDelphiSettings.Free;
     end;
