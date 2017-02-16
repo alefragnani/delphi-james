@@ -31,14 +31,16 @@ It will save a file called `.james` in the same folder as you execute. It is a `
             "...",
             "C:\\Users\\alefr\\Documents\\Delphi\\SynEdit\\Bin\\SynEdit_D101B.bpl"
         ],
-        "library_path": [
+        "library_path": {
+          "win32": [
             "$(BDSLIB)\\$(Platform)\\release",
             "$(BDSUSERDIR)\\Imports",
             "$(BDS)\\Imports",
             "$(BDSCOMMONDIR)\\Dcp",
             "$(BDS)\\include",
             "C:\\Users\\alefr\\Documents\\Delphi\\SynEdit\\Lib"
-        ],
+          ]
+        },
         "environment_variables": [
             "$(PUBLIC)\\Documents\\Embarcadero\\InterBase\\redist\\InterBaseXE7\\IDE_spoof",
             "$(PATH)",
@@ -49,6 +51,8 @@ It will save a file called `.james` in the same folder as you execute. It is a `
 ```
 
 You add this `.james` file to the project's repository, and everyone which loads the repository will be able to _apply_ the settings.
+
+> _Breaking in v0.3.0:_ The file format has been updated to support multiplatform in `library_path`. So, if you have any `.james` file for Delphi Berlin, you should update it as the example above _(note the `win32` node)_.
 
 ### Applying Delphi Settings
 
@@ -67,14 +71,16 @@ The `-a:` parameter indicates that you want to _Apply_ the settings, in this cas
 For now **James** stores the following settings _(new comming soon)_:
 
 * Installed Packages
-* Library Path (Win32)
+* Library Path
 * Environment Variables
 
 ## Compatibility
 
 **James** currently supports the following Delphi versions:
 
+* Delphi 5
 * Delphi 2006 (Turbo Delphi)
+* Delphi Seattle
 * Delphi Berlin
 
 > The _Edition_ is irrelevant
@@ -93,18 +99,25 @@ For now **James** stores the following settings _(new comming soon)_:
 
 The project is in _early development_ and there is still more stuff to be added. Be patience :smile:
 
+
 * Finish up **VisualJames** _(initially created just for testing purposes)_
 * Add `verbose` mode 
-* Support **64bits** settings when available
+* ~~Support **multiplatform** settings when available~~
 * Support other Delphi versions
 * Support other relevant Delphi settings
 * ~~Support Relative Path~~-
 
+> Check for [more issues](https://github.com/alefragnani/delphi-james/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) 
+
 ## Changelog
+
+### Version 0.3.0
+
+* **New:** Support multiplatform settings
 
 ### Version 0.2.0
 
-* **New**: Support Relative Path
+* **New:**: Support Relative Path
 
 ### Version 0.1.0
 
