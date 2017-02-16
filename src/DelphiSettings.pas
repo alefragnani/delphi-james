@@ -368,8 +368,8 @@ begin
       sb.Remove(sb.Length - 1, 1);
       FRegistry.WriteString('Search Path', sb.ToString());
     end;
+    FRegistry.CloseKey;
   end;
-  FRegistry.CloseKey;
 end;
 
 procedure TDelphiSettings.SaveEnvironmentVariables;
@@ -406,7 +406,7 @@ end;
 procedure TDelphiSettings.LoadDelphiSettingsFromJSON(const filename: string);
 var
   sl: TStringList;
-  o: TJSONObject;
+  o, olp: TJSONObject;
   a: TJSONArray;
   idx: integer;
   i: byte;
@@ -436,17 +436,22 @@ begin
 
       if not FCurrentVersion.SupportsVariousPlatforms then
       begin
-          a := TJSONArray(o.Get('library_path').JsonValue);
-          for idx := 0 to a.Count - 1 do
-            FLibraryPath[dpWin32].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+        a := TJSONArray(o.Get('library_path').JsonValue);
+        for idx := 0 to a.Count - 1 do
+          FLibraryPath[dpWin32].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
       end
       else
       begin
+        olp := TJSONObject(o.Get('library_path').JsonValue);
         for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
         begin
-          a := TJSONArray(o.Get('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i)))).JsonValue);
-          for idx := 0 to a.Count - 1 do
-            FLibraryPath[TDelphiPlatform(i)].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+          // exists?
+          if olp.Get(AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i)))) <> nil then
+          begin
+            a := TJSONArray(olp.Get(AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i)))).JsonValue);
+            for idx := 0 to a.Count - 1 do
+              FLibraryPath[TDelphiPlatform(i)].Add(ReplaceBaseFolderByRealValue(RemoveDoubleQuotes(a.Items[idx].ToString)));
+          end;
         end;
       end;
 
@@ -487,7 +492,7 @@ end;
 
 procedure TDelphiSettings.SaveDelphiSettingsToJSON(const filename: string);
 var
-  o: TJSONObject;
+  o, olp: TJSONObject;
   a: TJSONArray;
   item: string;
   sl: TStringList;
@@ -514,16 +519,18 @@ begin
     end
     else
     begin
+      olp := TJSONObject.Create;
       for i := Ord(Low(TDelphiPlatform)) to Ord(High(TDelphiPlatform)) do
       begin
         if FLibraryPath[TDelphiPlatform(i)].Count > 0 then
         begin
           a := TJSONArray.Create();
-          o.AddPair('library_path_' + AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i))), a);
+          olp.AddPair(AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i))), a);
           for item in FLibraryPath[TDelphiPlatform(i)] do
             a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
         end;
       end;
+      o.AddPair('library_path', olp);
     end;
 
     a := TJSONArray.Create();
