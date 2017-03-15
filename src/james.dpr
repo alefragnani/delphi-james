@@ -36,6 +36,12 @@ uses
     Writeln(' Available options: ');
     WriteLn('  -l   Load Delphi Settings and save to .james file');
     Writeln('  -a   Apply Delphi Settings stored in .james file');
+    WriteLn('');
+    Writeln(' Delphi Supported Versions: ');
+    WriteLn('  - 5');
+    Writeln('  - 2006');
+    Writeln('  - Seattle');
+    Writeln('  - Berlin');
   end;
 
   procedure WriteHelp;
