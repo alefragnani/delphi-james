@@ -16,6 +16,8 @@ const
 type
   EDelphiVersionNotSupported = class(Exception);
 
+  TLogEvent = procedure(Sender: TObject; const msg: string);
+
   TDelphiSettings = class
   private
     FSupportedVersions: TList<TDelphiVersion>;
@@ -28,6 +30,8 @@ type
     FEnvironmentVariables: System.Generics.Collections.TList<string>;
 
     FLastError: string;
+
+    FOnLog: TLogEvent;
 
     procedure InitSupportedVersions;
     function DoubleBackslash(const path: string): string;
@@ -52,6 +56,8 @@ type
     procedure SaveKnownPackages;
     procedure SaveLibraryPath;
     procedure SaveEnvironmentVariables;
+
+    procedure Log(const msg: string);
   public
     constructor Create;
     destructor Destroy; override;
@@ -70,6 +76,7 @@ type
     property EnvironmentVariables: TArray<string> read GetEnvironmentVariables;
 
     property LastError: string read GetLastError;
+    property OnLog: TLogEvent read FOnLog write FOnLog;
   end;
 
 implementation
@@ -211,9 +218,11 @@ begin
   if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyKnownPackages, False) then
     exit;
 
+  Log('- Known Packages');
   oKeys := TStringList.Create;
   try
     FRegistry.GetValueNames(oKeys);
+    Log(Format('  %d Packages detected', [oKeys.Count]));
     for key in oKeys do
     begin
       FKnownPackages.Add(key);
@@ -230,11 +239,13 @@ var
   key, searchPath: string;
   i: byte;
 begin
+  Log('- Library Path');
   for i := Ord(Low(FLibraryPath)) to Ord(High(FLibraryPath)) do
   begin
     if not FRegistry.OpenKey(FCurrentVersion.GetLibraryPathForPlatform(TDelphiPlatform(i)), False) then
       Continue;
 
+    Log('  - ' + TDelphiVersion.PlatformStr(TDelphiPlatform(i)));
     oKeys := TStringList.Create;
     try
       searchPath := FRegistry.ReadString('Search Path');
@@ -245,11 +256,14 @@ begin
         oKeys.StrictDelimiter := true;
         oKeys.DelimitedText := searchPath;
 
+        Log(Format('    %d paths loaded', [oKeys.Count]));
         for key in oKeys do
         begin
           FLibraryPath[TDelphiPlatform(i)].Add(key);
         end;
       end;
+//      else
+//        Log('    NO paths');
     finally
       oKeys.Free;
     end;
@@ -265,6 +279,7 @@ begin
   if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyEnvironmentVariables, False) then
     exit;
 
+  Log('- Environment Variables');
   oKeys := TStringList.Create;
   try
     searchPath := FRegistry.ReadString('PATH');
@@ -275,11 +290,14 @@ begin
       oKeys.StrictDelimiter := true;
       oKeys.DelimitedText := searchPath;
 
+      Log(Format('  %d PATH variables loaded', [oKeys.Count]));
       for key in oKeys do
       begin
         FEnvironmentVariables.Add(key);
       end;
     end;
+//    else
+//      Log('  NO PATH variables');
   finally
     oKeys.Free;
   end;
@@ -332,6 +350,7 @@ begin
   if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyKnownPackages, False) then
     exit;
 
+  Log('- Known Packages');
   oKeys := TStringList.Create;
   try
     FRegistry.GetValueNames(oKeys);
@@ -346,6 +365,7 @@ begin
   if FKnownPackages.Count = 0 then
     exit;
 
+  Log(Format('  %d packages applied', [FKnownPackages.Count]));
   for package in FKnownPackages do
   begin
     FRegistry.WriteString(package, package);
@@ -359,15 +379,18 @@ var
   sb: TStringBuilder;
   i: byte;
 begin
+  Log('- Library Path');
   for i := Ord(Low(FLibraryPath)) to Ord(High(FLibraryPath)) do
   begin
     if not FRegistry.OpenKey(FCurrentVersion.GetLibraryPathForPlatform(TDelphiPlatform(i)), False) then
       Continue;
 
+    Log('  - ' + TDelphiVersion.PlatformStr(TDelphiPlatform(i)));
     if FLibraryPath[TDelphiPlatform(i)].Count > 0 then
 //      FRegistry.WriteString('Search Path', '')
 //    else
     begin
+      Log(Format('    %d paths applied', [FLibraryPath[TDelphiPlatform(i)].Count]));
       sb := TStringBuilder.Create;
       for path in FLibraryPath[TDelphiPlatform(i)] do
       begin
@@ -377,6 +400,8 @@ begin
       sb.Remove(sb.Length - 1, 1);
       FRegistry.WriteString('Search Path', sb.ToString());
     end;
+//    else
+//      Log('    NO PATH applied');
     FRegistry.CloseKey;
   end;
 end;
@@ -389,10 +414,12 @@ begin
   if not FRegistry.OpenKey(FCurrentVersion.RegistryKeyEnvironmentVariables, False) then
     exit;
 
+  Log('- Environment Variables');
   if FEnvironmentVariables.Count = 0 then
     FRegistry.WriteString('PATH', '')
   else
   begin
+    Log(Format('    %d PATH applied', [FEnvironmentVariables.Count]));
     sb := TStringBuilder.Create;
     for path in FEnvironmentVariables do
     begin
@@ -573,6 +600,12 @@ begin
     sl.free;
     o.Free;
   end;
+end;
+
+procedure TDelphiSettings.Log(const msg: string);
+begin
+  if Assigned(FOnLog) then
+    FOnLog(Self, msg);
 end;
 
 {#ENDREGION }

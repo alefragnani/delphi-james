@@ -75,7 +75,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_MinorVer>4</VerInfo_MinorVer>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=0.4.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <Debugger_RunParams>-a:.asdf</Debugger_RunParams>
+        <Debugger_RunParams>-l:berlin</Debugger_RunParams>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">

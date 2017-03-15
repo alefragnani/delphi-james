@@ -24,7 +24,7 @@ uses
   begin
     WriteLn('');
     WriteLn('****************************');
-    WriteLn('** Delphi James v.0.3.0.0 **');
+    WriteLn('** Delphi James v.0.4.0.0 **');
     WriteLn('****************************');
     WriteLn('');
   end;
@@ -58,6 +58,28 @@ uses
     WriteParametersHelp ;
   end;
 
+  procedure WriteCommandStart(const msg: string);
+  begin
+    WriteHeader;
+    WriteLn('.. ' + msg + ' ..');
+  end;
+
+  procedure WriteCommandEnd(const msg: string);
+  begin
+    WriteLn('.. Finished ..');
+    WriteLn('  -> ' + msg);
+  end;
+
+  procedure WriteCommandError(const msg: string);
+  begin
+    WriteLn(' ERROR: ' + msg);
+  end;
+
+  procedure Log(Sender: TObject; const msg: string);
+  begin
+    WriteLn('   ' + msg);
+  end;
+
 var
   FDelphiSettings: TDelphiSettings;
   param1, jamesFile: string;
@@ -74,19 +96,22 @@ begin
   begin
     if param1 = '' then
     begin
-      //WriteLn('Error: No version defined. Use -l:VERSION');
       WriteParameterError('Error: No version defined. Use -l:VERSION');
       exit;
     end;
 
+    WriteCommandStart('Loading Delphi Settings');
     jamesFile := IncludeTrailingPathDelimiter(GetCurrentDir) + '.james';
     FDelphiSettings := TDelphiSettings.Create;
     try
       try
+        if FindCmdLineSwitch('v') then
+          FDelphiSettings.OnLog := Log;
+
         FDelphiSettings.Version := 'Delphi ' + param1;
         FDelphiSettings.LoadDelphiSettings;
         FDelphiSettings.SaveDelphiSettingsToJSON(jamesFile);
-        WriteLn('Success: Settings saved to .james file');
+        WriteCommandEnd('Settings saved to .james file');
       except
         on e: EDelphiVersionNotSupported do
           WriteLn('Error: ' + e.Message);
@@ -103,7 +128,6 @@ begin
     param1 := IncludeTrailingPathDelimiter(GetCurrentDir) + '.james';
     if not FileExists(param1) then
     begin
-      //WriteLn('Error: File ".james" does not exists.');
       WriteParameterError('Error: File ".james" does not exists.');
       Exit;
     end;
@@ -114,31 +138,29 @@ begin
     if not FindCmdLineSwitch('a', param1, true, [clstValueAppended]) then
     begin
       WriteParameterError('Error: Invalid parameter.');
-//      WriteLn('Error: Invalid parameter.');
-//      Writeln('       Supported values are: ');
-//      Writeln('         -l:<Delphi Version>');
-//      Writeln('         -a:<Path to .james file>');
       Exit;
     end;
 
     param1 := ExpandFileName(param1);
     if not FileExists(param1) then
     begin
-      //WriteLn('Error: File "' + param1 + '" does not exists.');
       WriteParameterError('Error: File "' + param1 + '" does not exists.');
       Exit;
     end;
   end;
 
+  WriteCommandStart('Applying Delphi Settings');
   FDelphiSettings := TDelphiSettings.Create;
   try
+    if FindCmdLineSwitch('v') then
+      FDelphiSettings.OnLog := Log;
     if FDelphiSettings.LoadDelphiSettingsFromJSON(param1) then
     begin
       FDelphiSettings.SaveDelphiSettings;
-      WriteLn('Success: Settings applied to ' + FDelphiSettings.Version);
+      WriteCommandEnd('Settings applied to ' + FDelphiSettings.Version);
     end
     else
-      WriteLn('Error: ' + FDelphiSettings.LastError);
+      WriteCommandError('Error: ' + FDelphiSettings.LastError);
   finally
     FDelphiSettings.Free;
   end;
