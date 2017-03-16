@@ -95,34 +95,6 @@ For now **James** stores the following settings _(new comming soon)_:
 * **James** icon by [Webalys](https://www.iconfinder.com/icons/379338/dome_food_icon#size=128)
 * `util\Converter.pas` and `util\Writer.pas` by [Embarcadero RTL.JSON Workbench Sample](http://docwiki.embarcadero.com/CodeExamples/Berlin/en/RTL.JSON_Workbench_Sample)
 
-## TODO List
-
-The project is in _early development_ and there is still more stuff to be added. Be patience :smile:
-
-
-* Finish up **VisualJames** _(initially created just for testing purposes)_
-* Add `verbose` mode 
-* ~~Support **multiplatform** settings when available~~
-* Support other Delphi versions
-* Support other relevant Delphi settings
-* ~~Support Relative Path~~-
-
-> Check for [more issues](https://github.com/alefragnani/delphi-james/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) 
-
-## Changelog
-
-### Version 0.3.0
-
-* **New:** Support multiplatform settings
-
-### Version 0.2.0
-
-* **New:**: Support Relative Path
-
-### Version 0.1.0
-
-* Initial release
-
 ## License
 
 [MIT](LICENSE.md) &copy; Alessandro Fragnani

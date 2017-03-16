@@ -1,3 +1,8 @@
+### Version 0.4.0
+
+* **New:** Added `-h` _(help)_ Command Parameter
+* **New:** Added `-v` _(verbose)_ Command Parameter
+
 ### Version 0.3.0
 
 * **New:** Support multiplatform settings
