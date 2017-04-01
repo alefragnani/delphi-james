@@ -1,10 +1,8 @@
-# ![James](res/james64.png) James - The Delphi Project Manager _(beta)_
+# ![James](res/james64.png) James - The Delphi Project Manager
 
 **James** is  intended to make your life easier while switching from one project to another. 
 
 If you see yourself _manually_ installing components and updating Delphi settings every time you have to _switch_ from one project to another, **James** may help you.
-
-> The project is in _early development_, so be patience :wink:
 
 ## Usage
 
@@ -82,6 +80,7 @@ For now **James** stores the following settings _(new comming soon)_:
 * Delphi 2006 (Turbo Delphi)
 * Delphi Seattle
 * Delphi Berlin
+* Delphi Tokyo
 
 > The _Edition_ is irrelevant
 

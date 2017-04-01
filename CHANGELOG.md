@@ -1,3 +1,7 @@
+### Version 0.5.0
+
+* **New:** Support Delphi 10.2 Tokyo
+
 ### Version 0.4.0
 
 * **New:** Added `-h` _(help)_ Command Parameter
