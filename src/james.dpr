@@ -34,7 +34,7 @@ uses
   begin
     WriteLn('');
     WriteLn('****************************');
-    WriteLn('** Delphi James v.0.4.0.0 **');
+    WriteLn('** Delphi James v.0.5.0.0 **');
     WriteLn('****************************');
     WriteLn('');
   end;
@@ -47,11 +47,12 @@ uses
     WriteLn('  -l   Load Delphi Settings and save to .james file');
     Writeln('  -a   Apply Delphi Settings stored in .james file');
     WriteLn('');
-    Writeln(' Delphi Supported Versions: ');
+    Writeln(' Supported Versions: ');
     WriteLn('  - 5');
     Writeln('  - 2006');
     Writeln('  - Seattle');
     Writeln('  - Berlin');
+    Writeln('  - Tokyo');
   end;
 
   procedure WriteHelp;

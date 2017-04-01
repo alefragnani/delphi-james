@@ -65,6 +65,13 @@ type
     constructor Create; override;
   end;
 
+  TDelphiTokyo = class(TDelphiVersion)
+  protected
+    function GetSupportedPlatforms: TDelphiPlatforms; override;
+  public
+    constructor Create; override;
+  end;
+
 implementation
 
 function TDelphiVersion.GetSupportedPlatforms: TDelphiPlatforms;
@@ -156,6 +163,20 @@ begin
 end;
 
 function TDelphiBerlin.GetSupportedPlatforms: TDelphiPlatforms;
+begin
+  result := [dpWin32, dpWin64, dpiOSDevice32, dpiOSDevice64, dpiOSSimulator,  dpOSX32, dpAndroid32];
+end;
+
+constructor TDelphiTokyo.Create;
+begin
+  Self.Description := 'Delphi Tokyo';
+  Self.RegistryKey := 'Software\Embarcadero\BDS\19.0';
+  Self.RegistryKeyKnownPackages := 'Software\Embarcadero\BDS\19.0\Known Packages';
+  Self.RegistryKeyLibraryPath := 'Software\Embarcadero\BDS\19.0\Library\' + TAG_PLATFORM;
+  Self.RegistryKeyEnvironmentVariables := 'Software\Embarcadero\BDS\19.0\Environment Variables';
+end;
+
+function TDelphiTokyo.GetSupportedPlatforms: TDelphiPlatforms;
 begin
   result := [dpWin32, dpWin64, dpiOSDevice32, dpiOSDevice64, dpiOSSimulator,  dpOSX32, dpAndroid32];
 end;
