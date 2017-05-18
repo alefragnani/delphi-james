@@ -9,6 +9,9 @@
         <Projects Include="james.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="JamesExpertTokyo.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="james:Make">
         <MSBuild Projects="james.dproj" Targets="Make"/>
     </Target>
+    <Target Name="JamesExpertTokyo">
+        <MSBuild Projects="JamesExpertTokyo.dproj"/>
+    </Target>
+    <Target Name="JamesExpertTokyo:Clean">
+        <MSBuild Projects="JamesExpertTokyo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="JamesExpertTokyo:Make">
+        <MSBuild Projects="JamesExpertTokyo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="VisualJames;james"/>
+        <CallTarget Targets="VisualJames;james;JamesExpertTokyo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="VisualJames:Clean;james:Clean"/>
+        <CallTarget Targets="VisualJames:Clean;james:Clean;JamesExpertTokyo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="VisualJames:Make;james:Make"/>
+        <CallTarget Targets="VisualJames:Make;james:Make;JamesExpertTokyo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
