@@ -8,6 +8,7 @@
 * **New:** Added `-v` _(verbose)_ Command Parameter
 
 ### Version 0.3.0
+sss
 
 * **New:** Support multiplatform settings
 
