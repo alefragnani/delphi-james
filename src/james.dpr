@@ -21,16 +21,20 @@ program james;
 ///
 ///   Applying Settings
 ///     -a = Apply Delphi Settings (.james file path)
+///
+///   Registering James
+///     -r = Register James in Shell (PATH Environment Variable)
 
 uses
   System.SysUtils,
   Vcl.Forms,
   DelphiSettings in 'DelphiSettings.pas',
   DelphiVersionInfo in 'DelphiVersionInfo.pas',
+  James.Register in 'James.Register.pas',
   Converters in '..\utils\Converters.pas',
   Writers in '..\utils\Writers.pas';
 
-  procedure WriteHeader;
+procedure WriteHeader;
   begin
     WriteLn('');
     WriteLn('****************************');
@@ -99,6 +103,15 @@ begin
   if FindCmdLineSwitch('h', param1, true, [clstValueAppended]) then
   begin
     WriteHelp;
+    Exit;
+  end;
+
+  // -r (REGISTER)
+  if FindCmdLineSwitch('r', param1, true, [clstValueAppended]) then
+  begin
+    WriteCommandStart('Registering James');
+    TRegister.RegisterInPath(ExtractFileDir(Application.ExeName));
+    WriteCommandEnd('James registered. Please restart your shell console to take effect.');
     Exit;
   end;
 
