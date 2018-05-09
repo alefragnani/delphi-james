@@ -1,20 +1,24 @@
-### Version 0.5.0
+## [2.3.0] - 2018-05-08 
+### Added
+- New command to register **James** in PATH Environment Variable
 
-* **New:** Support Delphi 10.2 Tokyo
+## [0.5.0 / 2.2.0] - 2017-04-01
+### Added
+- Support Delphi 10.2 Tokyo
 
-### Version 0.4.0
+## [0.4.0 / 2.1.0] - 2017-03-15
+### Added
+- Added `-h` _(help)_ Command Parameter
+- Added `-v` _(verbose)_ Command Parameter
 
-* **New:** Added `-h` _(help)_ Command Parameter
-* **New:** Added `-v` _(verbose)_ Command Parameter
+## [0.3.0 / 2.0.0] - 2017-02-15
+### Added
+- Support multiplatform settings
 
-### Version 0.3.0
+## [0.2.0 / 1.1.0] - 2017-01-14
+### Added
+- Support Relative Path
 
-* **New:** Support multiplatform settings
-
-## Version 0.2.0
-
-* **New**: Support Relative Path
-
-## Version 0.1.0
+## [0.1.0 / 1.0.0] - 2017-01-13
 
 * Initial release
