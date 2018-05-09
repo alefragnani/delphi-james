@@ -38,7 +38,7 @@ procedure WriteHeader;
   begin
     WriteLn('');
     WriteLn('****************************');
-    WriteLn('** Delphi James v.0.5.0.0 **');
+    WriteLn('** Delphi James v.2.3.0   **');
     WriteLn('****************************');
     WriteLn('');
   end;
