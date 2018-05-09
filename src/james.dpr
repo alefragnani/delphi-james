@@ -37,9 +37,9 @@ uses
 procedure WriteHeader;
   begin
     WriteLn('');
-    WriteLn('****************************');
-    WriteLn('** Delphi James v.2.3.0   **');
-    WriteLn('****************************');
+    WriteLn('*************************');
+    WriteLn('**    James v.2.3.0    **');
+    WriteLn('*************************');
     WriteLn('');
   end;
 
@@ -50,6 +50,7 @@ procedure WriteHeader;
     Writeln(' Available options: ');
     WriteLn('  -l   Load Delphi Settings and save to .james file');
     Writeln('  -a   Apply Delphi Settings stored in .james file');
+    Writeln('  -r   Register James in Shell (PATH Environment Variable)');
     WriteLn('');
     Writeln(' Supported Versions: ');
     WriteLn('  - 5');
