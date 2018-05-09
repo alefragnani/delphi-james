@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{45FC5291-FFE2-4305-95A3-0CCC4582C01A}</ProjectGuid>
-        <ProjectVersion>18.2</ProjectVersion>
+        <ProjectVersion>18.4</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <MainSource>james.dpr</MainSource>
         <Base>True</Base>
@@ -73,10 +73,11 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_MinorVer>5</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=0.5.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <Debugger_RunParams>-h</Debugger_RunParams>
+        <VerInfo_MinorVer>3</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.3.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=2.3.0.0;Comments=</VerInfo_Keys>
+        <Debugger_RunParams>-r</Debugger_RunParams>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -93,6 +94,7 @@
         </DelphiCompile>
         <DCCReference Include="DelphiSettings.pas"/>
         <DCCReference Include="DelphiVersionInfo.pas"/>
+        <DCCReference Include="James.Register.pas"/>
         <DCCReference Include="..\utils\Converters.pas"/>
         <DCCReference Include="..\utils\Writers.pas"/>
         <BuildConfiguration Include="Release">
