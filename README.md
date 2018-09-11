@@ -1,4 +1,7 @@
-# ![James](res/james64.png) James - The Delphi Project Manager
+<p align="center">
+  <br />
+  <a title="Learn more about James" href="http://github.com/alefragnani/delphi-james"><img src="res/james-logo-readme.png" alt="James Logo" width="50%" /></a>
+</p>
 
 **James** is  intended to make your life easier while switching from one project to another. 
 
