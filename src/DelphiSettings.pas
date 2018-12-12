@@ -137,6 +137,7 @@ begin
   FSupportedVersions.Add(TDelphiSeattle.Create);
   FSupportedVersions.Add(TDelphiBerlin.Create);
   FSupportedVersions.Add(TDelphiTokyo.Create);
+  FSupportedVersions.Add(TDelphiRio.Create);
 end;
 
 function TDelphiSettings.GetInstalledVersions: TArray<string>;
