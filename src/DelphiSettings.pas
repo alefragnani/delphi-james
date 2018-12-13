@@ -535,7 +535,11 @@ end;
 
 function TDelphiSettings.DoubleBackslash(const path: string): string;
 begin
+  {$IF CompilerVersion < 33}
   result := StringReplace(path, '\', '\\', [rfReplaceAll]);
+  {$ELSE}
+  result := path;
+  {$ENDIF}
 end;
 
 function TDelphiSettings.RemoveDoubleQuotes(const path: string): string;

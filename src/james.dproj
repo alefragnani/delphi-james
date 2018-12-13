@@ -75,7 +75,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_MinorVer>3</VerInfo_MinorVer>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.3.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=2.3.0.0;Comments=</VerInfo_Keys>
-        <Debugger_RunParams>-r</Debugger_RunParams>
+        <Debugger_RunParams>-l:Rio</Debugger_RunParams>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
     </PropertyGroup>
