@@ -44,7 +44,8 @@ type
     FOnLog: TLogEvent;
 
     procedure InitSupportedVersions;
-    function DoubleBackslash(const path: string): string;
+    function AddDoubleBackslash(const path: string): string;
+    function RemoveDoubleBackslash(const path: string): string;
     function RemoveDoubleQuotes(const path: string): string;
     function ReplaceBaseFolderByTag(const path: string): string;
     function ReplaceBaseFolderByRealValue(const path: string): string;
@@ -533,7 +534,7 @@ begin
   result := StringReplace(path, TAG_BASE_FOLDER, BaseFolder, [rfIgnoreCase]);
 end;
 
-function TDelphiSettings.DoubleBackslash(const path: string): string;
+function TDelphiSettings.AddDoubleBackslash(const path: string): string;
 begin
   {$IF CompilerVersion < 33}
   result := StringReplace(path, '\', '\\', [rfReplaceAll]);
@@ -542,9 +543,18 @@ begin
   {$ENDIF}
 end;
 
+function TDelphiSettings.RemoveDoubleBackslash(const path: string): string;
+begin
+  {$IF CompilerVersion >= 33}
+  result := StringReplace(path, '\\', '\', [rfReplaceAll]);
+  {$ELSE}
+  result := path;
+  {$ENDIF}
+end;
+
 function TDelphiSettings.RemoveDoubleQuotes(const path: string): string;
 begin
-  result := path;
+  result := RemoveDoubleBackslash(path);
   if result[1] = '"' then
     result := Copy(result, 2, MaxInt);
   if result[length(result)] = '"' then
@@ -573,20 +583,20 @@ begin
   try
     // add the array to the object.
     o.AddPair('version', FCurrentVersion.Description);
-    BaseFolder := DoubleBackslash(ExtractFileDir(filename));
+    BaseFolder := AddDoubleBackslash(ExtractFileDir(filename));
 
     //
     a := TJSONArray.Create();
     o.AddPair('known_packages', a);
     for item in FKnownPackages do
-      a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+      a.Add(ReplaceBaseFolderByTag(AddDoubleBackslash(item)));
 
     if not FCurrentVersion.SupportsVariousPlatforms then
     begin
       a := TJSONArray.Create();
       o.AddPair('library_path', a);
       for item in FLibraryPath[dpWin32] do
-        a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+        a.Add(ReplaceBaseFolderByTag(AddDoubleBackslash(item)));
     end
     else
     begin
@@ -598,7 +608,7 @@ begin
           a := TJSONArray.Create();
           olp.AddPair(AnsiLowerCase(TDelphiVersion.PlatformStr(TDelphiPlatform(i))), a);
           for item in FLibraryPath[TDelphiPlatform(i)] do
-            a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+            a.Add(ReplaceBaseFolderByTag(AddDoubleBackslash(item)));
         end;
       end;
       o.AddPair('library_path', olp);
@@ -607,7 +617,7 @@ begin
     a := TJSONArray.Create();
     o.AddPair('environment_variables', a);
     for item in FEnvironmentVariables do
-      a.Add(ReplaceBaseFolderByTag(DoubleBackslash(item)));
+      a.Add(ReplaceBaseFolderByTag(AddDoubleBackslash(item)));
 
   finally
     sl := TStringList.Create;
