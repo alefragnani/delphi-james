@@ -45,6 +45,7 @@ type
 
     procedure InitSupportedVersions;
     function DoubleBackslash(const path: string): string;
+    function RemoveDoubleBackslash(const path: string): string;
     function RemoveDoubleQuotes(const path: string): string;
     function ReplaceBaseFolderByTag(const path: string): string;
     function ReplaceBaseFolderByRealValue(const path: string): string;
@@ -137,6 +138,7 @@ begin
   FSupportedVersions.Add(TDelphiSeattle.Create);
   FSupportedVersions.Add(TDelphiBerlin.Create);
   FSupportedVersions.Add(TDelphiTokyo.Create);
+  FSupportedVersions.Add(TDelphiRio.Create);
 end;
 
 function TDelphiSettings.GetInstalledVersions: TArray<string>;
@@ -534,7 +536,16 @@ end;
 
 function TDelphiSettings.DoubleBackslash(const path: string): string;
 begin
+  {$IF CompilerVersion >= 33}
+  result := path;
+  {$ELSE}
   result := StringReplace(path, '\', '\\', [rfReplaceAll]);
+  {$ENDIF}
+end;
+
+function TDelphiSettings.RemoveDoubleBackslash(const path: string): string;
+begin
+  result := StringReplace(path, '\\', '\', [rfReplaceAll]);
 end;
 
 function TDelphiSettings.RemoveDoubleQuotes(const path: string): string;
@@ -544,6 +555,8 @@ begin
     result := Copy(result, 2, MaxInt);
   if result[length(result)] = '"' then
     result := Copy(result, 1, Length(result) - 1);
+
+  result := RemoveDoubleBackslash(result);
 end;
 
 procedure TDelphiSettings.SetLastError(const operation, message: string);
