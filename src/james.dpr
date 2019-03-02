@@ -37,9 +37,11 @@ uses
   procedure WriteHeader;
   begin
     WriteLn('');
-    WriteLn('*************************');
-    WriteLn('**    James v.2.4.0    **');
-    WriteLn('*************************');
+    WriteLn('**********************************************************');
+    WriteLn('*                      James v.2.4.0                     *');
+    WriteLn('*--------------------------------------------------------*');
+    WriteLn('* Copyright (c) Alessandro Fragnani. All rights reserved *');
+    WriteLn('**********************************************************');
     WriteLn('');
   end;
 
