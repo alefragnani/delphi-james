@@ -34,11 +34,11 @@ uses
   Converters in '..\utils\Converters.pas',
   Writers in '..\utils\Writers.pas';
 
-procedure WriteHeader;
+  procedure WriteHeader;
   begin
     WriteLn('');
     WriteLn('*************************');
-    WriteLn('**    James v.2.3.0    **');
+    WriteLn('**    James v.2.4.0    **');
     WriteLn('*************************');
     WriteLn('');
   end;
@@ -58,6 +58,7 @@ procedure WriteHeader;
     Writeln('  - Seattle');
     Writeln('  - Berlin');
     Writeln('  - Tokyo');
+    Writeln('  - Rio');
   end;
 
   procedure WriteHelp;
