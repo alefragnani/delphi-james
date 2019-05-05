@@ -121,7 +121,7 @@ I've been working on this on my spare time, and I really like it, but I'd willin
 
 ## License
 
-[MIT](LICENSE.md) &copy; Alessandro Fragnani
+[GPLv3](LICENSE.md) &copy; Alessandro Fragnani
 
 ### 3rd Party resources
 
