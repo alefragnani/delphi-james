@@ -1,10 +1,14 @@
+## [2.4.0] - 2018-03-02 
+### Added
+- Support **Delphi 10.3 Rio**
+
 ## [2.3.0] - 2018-05-08 
 ### Added
 - New command to register **James** in PATH Environment Variable
 
 ## [0.5.0 / 2.2.0] - 2017-04-01
 ### Added
-- Support Delphi 10.2 Tokyo
+- Support **Delphi 10.2 Tokyo**
 
 ## [0.4.0 / 2.1.0] - 2017-03-15
 ### Added

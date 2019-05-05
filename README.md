@@ -82,6 +82,7 @@ The `-a:` parameter indicates that you want to _Apply_ the settings, in this cas
 * Delphi Seattle
 * Delphi Berlin
 * Delphi Tokyo
+* Delphi Rio
 
 ## Installation
 
