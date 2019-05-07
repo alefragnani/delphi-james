@@ -1,10 +1,22 @@
 //-------------------------------------------------------------------------------------------------
 //
-// Copyright (c) Alessandro Fragnani. All rights reserved
+//    James - The Delphi Project Manager
 //
-// Licensed under the MIT License. See License.md in the project root for license information.
+//    Copyright (C) 2017  Alessandro Fragnani
 //
-// https://github.com/alefragnani/delphi-james
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 3 of the License.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+//    https://github.com/alefragnani/delphi-james
 //
 //-------------------------------------------------------------------------------------------------
 
@@ -38,7 +50,7 @@ uses
   begin
     WriteLn('');
     WriteLn('**********************************************************');
-    WriteLn('*                      James v.2.4.0                     *');
+    WriteLn('*                      James v.3.0.0                     *');
     WriteLn('*--------------------------------------------------------*');
     WriteLn('* Copyright (c) Alessandro Fragnani. All rights reserved *');
     WriteLn('**********************************************************');
@@ -61,6 +73,7 @@ uses
     Writeln('  - Berlin');
     Writeln('  - Tokyo');
     Writeln('  - Rio');
+    WriteLn('');
   end;
 
   procedure WriteHelp;

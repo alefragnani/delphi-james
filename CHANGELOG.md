@@ -1,3 +1,7 @@
+## [3.0.0] - 2018-05-06
+### Changed
+- Moved to **GPLv3** license
+
 ## [2.4.0] - 2018-03-02 
 ### Added
 - Support **Delphi 10.3 Rio**
