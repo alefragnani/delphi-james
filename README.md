@@ -74,6 +74,7 @@ It will save a file called `.james` in the same folder as you execute. It is a `
     }
 
 ```
+If you want to change the file name by setting a prefix, just use the `-o` parameter after the `-l` parameter.
 
 You add this `.james` file to the project's repository, and everyone which loads the repository will be able to _apply_ the settings.
 
