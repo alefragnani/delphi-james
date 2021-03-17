@@ -3,9 +3,11 @@
   <a title="Learn more about James" href="http://github.com/alefragnani/delphi-james"><img src="res/james-logo-readme.png" alt="James Logo" width="50%" /></a>
 </p>
 
-# What's new in James 3
+# What's new in James 3.0.2
 
 * Delphi **Rio** Support
+* Delphi **Sydney** Support
+* Output file prefix setting
 
 ## Support
 
