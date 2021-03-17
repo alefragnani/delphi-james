@@ -65,6 +65,7 @@ uses
     WriteLn('  -l   Load Delphi Settings and save to .james file');
     Writeln('  -a   Apply Delphi Settings stored in .james file');
     Writeln('  -r   Register James in Shell (PATH Environment Variable)');
+    Writeln('  -o   Output file prefix');
     WriteLn('');
     Writeln(' Supported Versions: ');
     WriteLn('  - 5');
@@ -115,7 +116,7 @@ uses
 
 var
   FDelphiSettings: TDelphiSettings;
-  param1, jamesFile: string;
+  param1, param2, jamesFile: string;
 begin
   // -h (HELP)
   if FindCmdLineSwitch('h', param1, true, [clstValueAppended]) then
@@ -143,7 +144,12 @@ begin
     end;
 
     WriteCommandStart('Loading Delphi Settings');
-    jamesFile := IncludeTrailingPathDelimiter(GetCurrentDir) + '.james';
+
+    if FindCmdLineSwitch('o',param2,true,[clstValueAppended]) then
+      jamesFile := IncludeTrailingPathDelimiter(GetCurrentDir) + param2 + '.james'
+    else
+      jamesFile := IncludeTrailingPathDelimiter(GetCurrentDir) + '.james';
+
     FDelphiSettings := TDelphiSettings.Create;
     try
       try
@@ -153,7 +159,7 @@ begin
         FDelphiSettings.Version := 'Delphi ' + param1;
         FDelphiSettings.LoadDelphiSettings;
         FDelphiSettings.SaveDelphiSettingsToJSON(jamesFile);
-        WriteCommandEnd('Settings saved to .james file');
+        WriteCommandEnd('Settings saved to ' + jamesFile + ' file');
       except
         on e: EDelphiVersionNotSupported do
           WriteLn('Error: ' + e.Message);
