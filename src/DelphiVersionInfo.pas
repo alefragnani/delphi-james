@@ -91,6 +91,13 @@ type
     constructor Create; override;
   end;
 
+  TDelphiSydney = class(TDelphiVersion)
+  protected
+    function GetSupportedPlatforms: TDelphiPlatforms; override;
+  public
+    constructor Create; override;
+  end;
+
 implementation
 
 function TDelphiVersion.GetSupportedPlatforms: TDelphiPlatforms;
@@ -212,6 +219,22 @@ begin
 end;
 
 function TDelphiRio.GetSupportedPlatforms: TDelphiPlatforms;
+begin
+  result := [dpWin32, dpWin64, dpiOSDevice32, dpiOSDevice64, dpiOSSimulator,  dpOSX32, dpAndroid32];
+end;
+
+{ TDelphiSydney }
+
+constructor TDelphiSydney.Create;
+begin
+  Self.Description := 'Delphi Sydney';
+  Self.RegistryKey := 'Software\Embarcadero\BDS\21.0';
+  Self.RegistryKeyKnownPackages := 'Software\Embarcadero\BDS\21.0\Known Packages';
+  Self.RegistryKeyLibraryPath := 'Software\Embarcadero\BDS\21.0\Library\' + TAG_PLATFORM;
+  Self.RegistryKeyEnvironmentVariables := 'Software\Embarcadero\BDS\21.0\Environment Variables';
+end;
+
+function TDelphiSydney.GetSupportedPlatforms: TDelphiPlatforms;
 begin
   result := [dpWin32, dpWin64, dpiOSDevice32, dpiOSDevice64, dpiOSSimulator,  dpOSX32, dpAndroid32];
 end;

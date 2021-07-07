@@ -73,6 +73,7 @@ uses
     Writeln('  - Berlin');
     Writeln('  - Tokyo');
     Writeln('  - Rio');
+    Writeln('  - Sydney');
     WriteLn('');
   end;
 
