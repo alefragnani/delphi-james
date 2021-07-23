@@ -1,3 +1,8 @@
+## [3.1.0] - 2021-07-22
+### Added
+- Support **Delphi 10.4 Sydney**
+- Added `-0` _(output prefix)_ Command Parameter
+
 ## [3.0.0] - 2018-05-06
 ### Changed
 - Moved to **GPLv3** license

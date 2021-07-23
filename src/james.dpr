@@ -50,7 +50,7 @@ uses
   begin
     WriteLn('');
     WriteLn('**********************************************************');
-    WriteLn('*                      James v.3.0.0                     *');
+    WriteLn('*                      James v.3.1.0                     *');
     WriteLn('*--------------------------------------------------------*');
     WriteLn('* Copyright (c) Alessandro Fragnani. All rights reserved *');
     WriteLn('**********************************************************');

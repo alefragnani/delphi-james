@@ -3,11 +3,10 @@
   <a title="Learn more about James" href="http://github.com/alefragnani/delphi-james"><img src="res/james-logo-readme.png" alt="James Logo" width="50%" /></a>
 </p>
 
-# What's new in James 3.0.2
+# What's new in James 3.1.0
 
-* Delphi **Rio** Support
-* Delphi **Sydney** Support
-* Output file prefix setting
+* Adds Delphi **Sydney** Support
+* Adds output file prefix parameter
 
 ## Support
 
@@ -76,9 +75,17 @@ It will save a file called `.james` in the same folder as you execute. It is a `
     }
 
 ```
-If you want to change the file name by setting a prefix, just use the `-o` parameter after the `-l` parameter.
-
 You add this `.james` file to the project's repository, and everyone which loads the repository will be able to _apply_ the settings.
+
+### Defining a custom name to the `.james` file
+
+The `-o` parameter allows you to define a custom name (prefix) to the `.james` file. 
+
+```bat
+    C:\Projects\FirstProject>james.exe -l:Berlin -o:first
+```
+
+Doing so, the Delphi settings will be stored in the `first.james` file
 
 ### Applying Delphi Settings
 
@@ -110,10 +117,12 @@ The `-a:` parameter indicates that you want to _Apply_ the settings, in this cas
 * Delphi Berlin
 * Delphi Tokyo
 * Delphi Rio
+* Delphi Sydney
 
 ## Installation
 
 * Clone the repo `https://github.com/alefragnani/delphi-james.git`
+* Open the `james.dpr` project and build it
 * You will find **James** executable in the `bin` folder
 
 ### Registration
