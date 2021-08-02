@@ -133,6 +133,14 @@ You may find usefull to register **James** in you `PATH` Environment Variable, s
 C:\delphi-james\bin\james.exe -r
 ```
 
+## Contributors
+
+Special thanks to the people that have contributed to the project:
+
+* Anderson Dapper Rocha (@toppermitz) 
+  - Support **Delphi 10.4 Sydney** ([see PR](https://github.com/alefragnani/delphi-james/pull/14))
+  - Added `-0` _(output prefix)_ Command Parameter ([see PR](https://github.com/alefragnani/delphi-james/pull/15))
+
 # License
 
 [GPLv3](LICENSE.md) &copy; Alessandro Fragnani

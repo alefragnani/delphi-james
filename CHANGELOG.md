@@ -1,7 +1,7 @@
 ## [3.1.0] - 2021-07-22
 ### Added
-- Support **Delphi 10.4 Sydney**
-- Added `-0` _(output prefix)_ Command Parameter
+- Support **Delphi 10.4 Sydney** (thanks to @toppermitz [#14](https://github.com/alefragnani/delphi-james/pull/14))
+- Added `-0` _(output prefix)_ Command Parameter (thanks to @toppermitz [#15](https://github.com/alefragnani/delphi-james/pull/15))
 
 ## [3.0.0] - 2018-05-06
 ### Changed
