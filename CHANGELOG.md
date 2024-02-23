@@ -1,3 +1,7 @@
+## [3.2.0] - 2024-02-23
+### Added
+- Support **Delphi 11 Alexandria**
+
 ## [3.1.0] - 2021-07-22
 ### Added
 - Support **Delphi 10.4 Sydney** (thanks to @toppermitz [#14](https://github.com/alefragnani/delphi-james/pull/14))
