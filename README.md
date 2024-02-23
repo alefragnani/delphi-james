@@ -3,8 +3,9 @@
   <a title="Learn more about James" href="http://github.com/alefragnani/delphi-james"><img src="res/james-logo-readme.png" alt="James Logo" width="50%" /></a>
 </p>
 
-# What's new in James 3.1.0
+# What's new in James 3.2.0
 
+* Adds Delphi **Alexandria** Support
 * Adds Delphi **Sydney** Support
 * Adds output file prefix parameter
 
